@@ -1,0 +1,33 @@
+/*  Fonts */
+
+$base-font-size: 10px;
+
+/* Colors */
+
+$black: #000;
+
+$white: #fff;
+$gray: #d9d9d9;
+
+$rose: #ff69b4;
+
+$blue: #5baaf9;
+
+$sand: #b6a16b;
+
+$green: #97bb31;
+
+$error: #f00;
+
+/* Breakpoints */
+
+$breakpoints: (
+    mobile: 767px,
+    tablet: 1279px,
+    laptop: 1440px,
+    desktop: 1920px,
+);
+
+/* Transition */
+
+$default-transition: .24s cubic-bezier(.12, 1, .48, 1);
