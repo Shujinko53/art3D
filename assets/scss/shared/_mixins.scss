@@ -10,3 +10,13 @@
         @content;
     }
 }
+
+@mixin font($alias, $name, $weight) {
+    @font-face {
+        font-family: $alias;
+        src: url("~assets/fonts/" + $name + ".otf") format("opentype");
+        font-weight: $weight;
+        font-style: normal;
+        font-display: swap;
+    }
+}

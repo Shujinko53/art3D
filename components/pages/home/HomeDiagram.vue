@@ -1,18 +1,37 @@
 <template>
-    <div :class="$style.HomeDiagram">
-
-    </div>
+    <div></div>
 </template>
 
 <script>
 export default {
-    name: 'HomeDiagram'
+    name: 'HomeDiagram',
 
+    components: {
+        //
+    },
+
+    props: {
+        //
+    },
+
+    data() {
+        return {
+            //
+        };
+    },
+
+    computed: {
+        //
+    },
+
+    methods: {
+        //
+    },
 }
 </script>
 
 <style lang="scss" module>
-    .HomeDiagram {
-        //
+   .HomeDiagram {
+        
     }
 </style>

@@ -1,13 +1,17 @@
 <template>
-    <div :class="$style.IndexPage"></div>
+    <div :class="$style.IndexPage">
+        <HomeForm/>
+    </div>
 </template>
 
 <script>
+import HomeForm from '~/components/pages/home/HomeForm';
+
 export default {
     name: 'IndexPage',
 
     components: {   
-        //
+        HomeForm,
     },
 
     props: {

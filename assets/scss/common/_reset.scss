@@ -48,3 +48,25 @@ svg {
     -webkit-user-select: none;
     user-select: none;
 }
+
+input {
+    outline: none;
+
+    &[type="number"]::-webkit-inner-spin-button,
+    &[type="number"]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    &[type="time"]::-webkit-clear-button {
+        display: none;
+    }
+
+    &::-ms-clear {
+        display: none;
+    }
+}
+
+textarea {
+    resize: none;
+}
