@@ -1,13 +1,46 @@
 <template>
     <div ref="form" :class="$style.Form">
-        <div :class="$style.inputItem">
-            <div :class="$style.label">Name</div>
-            <input type="text" :class="$style.input">
+        <div :class="[$style.inputItem, {[$style._error] : errors.name}]">
+            <div :class="[$style.label, {[$style._small] : inputData.name}]">
+                Name
+            </div>
+
+            <input v-model="inputData.name"
+                   type="text" 
+                   :class="$style.input"
+                   @input="inputRegCheck('name')"
+            >
+
+            <transition name="fade">
+                <span v-if="errors.name"
+                      :class="$style.inputError"
+                >
+                    {{ errors.name }}
+                </span>
+            </transition>
         </div>
-        <div :class="$style.inputItem">
-            <div :class="$style.label">Phone</div>
-            <input type="text" :class="$style.input">
+
+        <div :class="[$style.inputItem, {[$style._error] : errors.phone}]">
+            <div :class="[$style.label, {[$style._small] : inputData.phone}]">
+                Phone
+            </div>
+
+            <input v-model="inputData.phone"
+                   type="number"
+                   inputmode="numeric"
+                   :class="$style.input"
+                   @input="inputRegCheck('phone')"
+            >
+
+            <transition name="fade">
+                <span v-if="errors.phone"
+                      :class="$style.inputError"
+                >
+                    {{ errors.phone }}
+                </span>
+            </transition>
         </div>
+
         <div :class="$style.inputItem"
              @mouseup="handleBtnUp"
              @click="handleMouseClick"
@@ -34,14 +67,41 @@
                 <span :class="$style.status">Cold</span>
             </div>
         </div>
-        <div :class="$style.inputItem">
-            <div :class="$style.label">Comments</div>
-            <input type="text" :class="$style.input">
+
+        <div :class="[$style.inputItem, {[$style._error] : errors.message}]">
+            <div :class="[$style.label, {[$style._small] : inputData.message}]">
+                Comments
+            </div>
+
+            <input v-model="inputData.message"
+                   type="text" 
+                   :class="$style.input"
+                   @input="inputComment"
+            >
+
+            <transition name="fade">
+                <span v-if="errors.message"
+                      :class="$style.inputError"
+                >
+                    {{ errors.message }}
+                </span>
+            </transition>
+        </div>
+
+        <div :class="$style.formWrapper">
+            <button :class="$style.submitButton">call me</button>
+
+            <div :class="$style.privacyText">
+                By pressing “Send” button 
+                I agree with <span>Privacy Policy</span>
+            </div>
         </div>
     </div>
 </template>
 
 <script>
+import { regCheck } from '~/assets/js/mixins/regCheck';
+
 export default {
     name: 'Form',
 
@@ -53,10 +113,27 @@ export default {
         //
     },
 
+    mixins: [
+        regCheck,
+    ],
+
     data() {
         return {
+            phoneMask: '+7 (###) ###-##-##',
             width: 0,
             testWidth: 0,
+
+            inputData: {
+                name: '',
+                phone: '',
+                message: '',
+            },
+
+            errors: {
+                name: '',
+                phone: '',
+                message: '',
+            },
         };
     },
 
@@ -105,6 +182,36 @@ export default {
                 this.width = 100;
             }
         },
+
+        // validation
+
+        inputRegCheck(type) {
+            if (type === 'name') {
+                this.errors[type] = this.regCheck(this.inputData[type], 'multyLang', true);
+                this.errors = { ...this.errors };
+            } else if (type === 'phone') {
+                this.errors[type] = this.regCheck(this.inputData[type], 'phone', true);
+                this.errors = { ...this.errors };
+            }
+        },
+
+        inputComment() {
+            if (this.errors.message.length) {
+                this.errors.message = '';
+            } else if (this.inputData.message.length > 300) {
+                this.errors.message = 'Не более 300 символов';
+            }
+        },
+
+        currentPreMask() {
+            if (this.lazyValue.length) {
+                const regex = new RegExp('^.{0,' + this.lazyValue.length + '}', 'g');
+                const pre = this.currentMask.replace(regex, `<span>${this.lazyValue}</span>`);
+                return pre.replace(/#/g, ' _ ');
+            }
+
+            return this.currentMask.replace(/#/g, ' _ ');
+        },
     },
 }
 </script>
@@ -113,13 +220,47 @@ export default {
    .Form {
         display: flex;
         flex-direction: column;
-        row-gap: 5.1rem;    
         width: 53.8rem;
+
+        @include respond-to(tablet) {
+            width: 100%;
+        }
+
+        @include respond-to(mobile) {
+        }
     }
 
     .inputItem {
         position: relative;
         height: 4.2rem;
+        margin-bottom: 5.1rem;
+
+        &:nth-child(4) {
+            margin-bottom: 13.6rem;
+        }
+
+        &._error {
+            .input {
+                border-color: $error;
+            }
+        }
+
+        @include respond-to(tablet) {
+            margin-bottom: 4rem;
+
+            &:nth-child(4) {
+                margin-bottom: 8rem;
+            }
+        }
+
+        @include respond-to(mobile) {
+            height: 3.2rem;
+            margin-bottom: 2rem;
+
+            &:nth-child(4) {
+                margin-bottom: 4rem;
+            }
+        }
     }
 
     .label,
@@ -128,12 +269,39 @@ export default {
         line-height: 2.1rem;
         letter-spacing: .05em;
         color: $text-color;
+
+        @include respond-to(tablet) {
+            //
+        }
+
+        @include respond-to(mobile) {
+            font-size: 1rem;
+            line-height: 1.6rem;
+        }
     }
 
     .label {
         position: absolute;
         top: 0;
         left: 0;
+        transition: $default-transition;
+
+        &._small {
+            font-size: 1rem;
+            line-height: 1.4rem;
+        }
+
+        @include respond-to(tablet) {
+            //
+        }
+
+        @include respond-to(mobile) {
+
+        &._small {
+            font-size: .6rem;
+            line-height: 1rem;
+        }
+        }
     }
 
     .input {
@@ -143,6 +311,36 @@ export default {
         border: 0;
         border-bottom: 1px solid rgba(238, 235, 230, .5);
         background-color: transparent;
+        text-transform: uppercase;
+        font-weight: 400;
+        transition: border $default-transition;
+
+        @include respond-to(tablet) {
+            //
+        }
+
+        @include respond-to(mobile) {
+            padding-top: 1.8rem;
+        }
+    }
+
+    .inputError {
+        display: block;
+        margin-top: .5rem;
+        font-size: 1rem;
+        line-height: 1.4rem;
+        letter-spacing: .02em;
+        color: $error;
+
+        @include respond-to(tablet) {
+
+        }
+
+        @include respond-to(mobile) {
+            margin-top: .3rem;
+            font-size: .8rem;
+            line-height: 1.2rem;
+        }
     }
 
     .bar {
@@ -203,5 +401,98 @@ export default {
         line-height: 1.4rem;
         letter-spacing: .05em;
         color: $text-color;
+
+        @include respond-to(tablet) {
+            //
+        }
+
+        @include respond-to(mobile) {
+            font-size: .7rem;
+            line-height: 1.2rem;
+        }
+    }
+
+    .formWrapper {
+        display: flex;
+        align-items: center;
+        column-gap: 7.2rem;
+        color: $text-color;
+
+        @include respond-to(tablet) {
+            column-gap: 4rem;
+        }
+
+        @include respond-to(mobile) {
+            justify-content: space-between;
+            column-gap: 2rem;
+        }
+    }
+
+    .submitButton {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        width: 17.3rem;
+        height: 5.6rem;
+        text-transform: uppercase;
+        font-size: 1.2rem;
+        line-height: 1.6rem;
+        letter-spacing: .05em;
+        border-radius: 10rem;
+        border: 1px solid $text-color;
+        transition: 
+            border $default-transition,
+            color $default-transition;
+        cursor: pointer;
+
+        &:hover {
+            border: 1px solid $blue;
+            color: $blue;
+        }
+
+        @include respond-to(tablet) {
+            width: 14rem;
+            height: 4.6rem;
+        }
+
+        @include respond-to(mobile) {
+            width: 10rem;
+            height: 3.6rem;
+            font-size: 1rem;
+            line-height: 1.4rem;
+        }
+    }
+
+    .privacyText {
+        width: 20.5rem;
+        font-size: 1.3rem;
+        line-height: 2rem;
+        letter-spacing: .05em;
+
+        & span {
+            text-decoration: underline;
+            color: $rose;
+            transition: color $default-transition;
+            cursor: pointer;
+            text-underline-offset: .2rem;
+
+            &:hover {
+                color: $blue;
+            }
+        }
+
+        @include respond-to(tablet) {
+            width: unset;
+            max-width: 19rem;
+            font-size: 1.2rem;
+            line-height: 1.6rem;
+        }
+
+        @include respond-to(mobile) {
+            max-width: 12.7rem;
+            font-size: .8rem;
+            line-height: 1.2rem;
+        }
     }
 </style>

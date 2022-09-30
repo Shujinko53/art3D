@@ -79,12 +79,33 @@ export default {
         padding: 5.6rem 8.6rem 9rem;
         background-color: $bg-color;
         cursor: default;
+
+        @include respond-to(tablet) {
+            padding: 4.6rem 4.6rem 6rem;
+        }
+
+        @include respond-to(mobile) {
+            position: relative;
+            flex-direction: column;
+            height: unset;
+            min-height: 100vh;
+            padding: 2rem 2rem 10rem;
+        }
     }
 
     // The left side
 
     .leftPart {
         width: 50%;
+
+        @include respond-to(tablet) {
+            //
+        }
+
+        @include respond-to(mobile) {
+            width: 100%;
+            margin-bottom: 3rem;
+        }
     }
     
     .contentWrapper {
@@ -92,6 +113,14 @@ export default {
         flex-direction: column;
         width: 48rem;
         height: 100%;
+
+        @include respond-to(tablet) {
+            width: 100%;
+        }
+
+        @include respond-to(mobile) {
+            //
+        }
     }
 
     .title {
@@ -102,6 +131,16 @@ export default {
         line-height: 7.2rem;
         letter-spacing: .03em;
         color: $text-color;
+
+        @include respond-to(tablet) {
+            font-size: 5.2rem;
+            line-height: 5.8rem;
+        }
+
+        @include respond-to(mobile) {
+            font-size: 3.6rem;
+            line-height: 4.2rem;
+        }
     }
 
     .text {
@@ -112,12 +151,34 @@ export default {
         line-height: 2.1rem;
         letter-spacing: .05em;
         color: $text-color;
+
+        @include respond-to(tablet) {
+            width: 17rem;
+            margin-bottom: 7rem;
+            font-size: 1.2rem;
+            line-height: 1.8rem;
+        }
+
+        @include respond-to(mobile) {
+            width: 14rem;
+            margin-bottom: 2rem;
+            font-size: 1rem;
+            line-height: 1.6rem;
+        }
     }
 
     .logo {
         width: 19.3rem;
         height: 4.8rem;
         color: #4d5d6f;
+
+        @include respond-to(tablet) {
+            width: 16rem;
+        }
+
+        @include respond-to(mobile) {
+            width: 12rem;
+        }
     }
 
     .copyrightsBlock {
@@ -128,6 +189,20 @@ export default {
         font-weight: 400;
         line-height: 1.8rem;
         letter-spacing: .05em;
+
+        @include respond-to(tablet) {
+            //
+        }
+
+        @include respond-to(mobile) {
+            position: absolute;
+            right: 2rem;
+            bottom: 4rem;
+            left: 2rem;
+            margin-top: unset;
+            font-size: 1rem;
+            line-height: 1.6rem;
+        }
     }
 
     .copyright {
@@ -144,5 +219,13 @@ export default {
         display: flex;
         align-items: center;
         width: 50%;
+
+        @include respond-to(tablet) {
+            //
+        }
+
+        @include respond-to(mobile) {
+            width: 100%;
+        }
     }
 </style>
