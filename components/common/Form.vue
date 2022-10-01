@@ -26,7 +26,9 @@
             </div>
 
             <input v-model="inputData.phone"
-                   type="number"
+                   v-mask="['+7 (###) ###-##-##', '+7 (###) ###-##-##']"
+                   type="tel"
+                   masked="false"
                    inputmode="numeric"
                    :class="$style.input"
                    @input="inputRegCheck('phone')"
@@ -101,6 +103,7 @@
 
 <script>
 import { regCheck } from '~/assets/js/mixins/regCheck';
+import { cleanPhone } from '~/assets/js/utils/common-utils';
 
 export default {
     name: 'Form',
@@ -119,7 +122,6 @@ export default {
 
     data() {
         return {
-            phoneMask: '+7 (###) ###-##-##',
             width: 0,
             testWidth: 0,
 
@@ -148,7 +150,7 @@ export default {
             // if (this.$mq !== 'tablet' && this.$mq !== 'mobile') {
             //     this.activeCompare = false;
             // }
-            console.log('up');
+            console.log(cleanPhone(this.inputData.phone));
             window.removeEventListener('mousemove', this.onMouseMove);
         },
 
