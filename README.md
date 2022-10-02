@@ -1,9 +1,10 @@
 # art3D
 
 ## Build Setup
-1) Clone repository
 
 ```bash
+1) Clone repository
+
 2) # install dependencies
 $ npm install
 
