@@ -1,11 +1,12 @@
 # art3D
 
 ## Build Setup
+1) Clone repository
 
 ```bash
-1) # install dependencies
+2) # install dependencies
 $ npm install
 
-2) # serve with hot reload at localhost:3000
+3) # serve with hot reload at localhost:3000
 $ npm run dev
 
