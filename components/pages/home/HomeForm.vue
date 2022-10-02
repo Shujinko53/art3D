@@ -81,6 +81,9 @@ export default {
         cursor: default;
 
         @include respond-to(tablet) {
+            height: unset;
+            min-height: 100vh;
+            column-gap: 3rem;
             padding: 4.6rem 4.6rem 6rem;
         }
 
