@@ -51,12 +51,14 @@
             <div :class="$style.bar">
                 <div :class="$style.barWrapper">
                     <div :class="$style.lineHot"
-                         :style="{width: `${width}%`}"
+                         :style="{width: `${temperature}%`}"
                     >
                     </div>
                     <div :class="$style.lineCold"></div>
                     <div :class="$style.runner"
-                         :style="{left: `${width}%`}"
+                         :style="{left: `${temperature}%`}"
+                         v-touch:moving="handleTouchDown"
+                         v-touch:end="handleTouchUp"
                          @mousedown="handleBtnDown"
                          @mouseup="handleBtnUp"
                     >
@@ -91,7 +93,11 @@
         </div>
 
         <div :class="$style.formWrapper">
-            <button :class="$style.submitButton">call me</button>
+            <button :class="$style.submitButton"
+                    @click="onSubmit"
+            >
+                call me
+            </button>
 
             <div :class="$style.privacyText">
                 By pressing “Send” button 
@@ -122,8 +128,7 @@ export default {
 
     data() {
         return {
-            width: 0,
-            testWidth: 0,
+            temperature: 50,
 
             inputData: {
                 name: '',
@@ -140,52 +145,45 @@ export default {
     },
 
     computed: {
-        //
+        tempRecalc() {
+            return this.temperature === 50 ? 0 : 50 - this.temperature;
+        },
     },
 
     methods: {
-        // ---------- mouse handlers ----------
+        // validation and submit form
 
-        handleBtnUp() {
-            // if (this.$mq !== 'tablet' && this.$mq !== 'mobile') {
-            //     this.activeCompare = false;
-            // }
-            console.log(cleanPhone(this.inputData.phone));
-            window.removeEventListener('mousemove', this.onMouseMove);
-        },
-
-        handleBtnDown() {
-            // if (this.$mq !== 'tablet' && this.$mq !== 'mobile') {
-            //     this.activeCompare = true;
-            // }
-            window.addEventListener('mousemove', this.onMouseMove);
-        },
-
-        onMouseMove(e) {
-            const formWidth = this.$refs.form.getBoundingClientRect().width;
-            const mousePosition = e.offsetX;
-            this.width = Math.round(mousePosition / formWidth * 100);
-
-            if (this.width < 0) {
-                this.width = 0;
-            } else if (this.width > 100) {
-                this.width = 100;
+        onSubmit() {
+            if (this.validate()) {
+                console.log('Name: ', this.inputData.name);
+                console.log('Phone: ', cleanPhone(this.inputData.phone));
+                console.log('Temperature: ', this.tempRecalc);
+                console.log('Message: ', this.inputData.message);
+                console.log('The form has been successfully submitted!');
+            } else {
+                console.log(`The form has not been submitted!\nСheck the entered data!`);
             }
         },
 
-        handleMouseClick(e) {
-            const formWidth = this.$refs.form.getBoundingClientRect().width;
-            const mousePosition = e.offsetX;
-            this.width = Math.round(mousePosition / formWidth * 100);
+        validate() {
+            let isValidated = true;
 
-            if (this.width < 0) {
-                this.width = 0;
-            } else if (this.width > 100) {
-                this.width = 100;
+            this.errors.name = this.regCheck(this.inputData.name, 'multyLang', true);
+            this.errors.phone = this.regCheck(this.inputData.phone, 'phone', true);
+
+            if (this.inputData.message.length > 300) {
+                this.errors.message = 'No more than 300 characters';
+                isValidated = false;
             }
-        },
 
-        // validation
+            Object.values(this.errors).forEach(field => {
+                if (field) {
+                    isValidated = false;
+                }
+            });
+
+            return isValidated;
+        },
 
         inputRegCheck(type) {
             if (type === 'name') {
@@ -198,21 +196,82 @@ export default {
         },
 
         inputComment() {
-            if (this.errors.message.length) {
-                this.errors.message = '';
-            } else if (this.inputData.message.length > 300) {
+            if (this.inputData.message.length > 300) {
                 this.errors.message = 'Не более 300 символов';
             }
         },
+        
+        // ---------- mouse handlers ----------
 
-        currentPreMask() {
-            if (this.lazyValue.length) {
-                const regex = new RegExp('^.{0,' + this.lazyValue.length + '}', 'g');
-                const pre = this.currentMask.replace(regex, `<span>${this.lazyValue}</span>`);
-                return pre.replace(/#/g, ' _ ');
+        handleBtnUp() {
+            // if (this.$mq !== 'tablet' && this.$mq !== 'mobile') {
+            //     this.activeCompare = false;
+            // }
+            window.removeEventListener('mousemove', this.onMouseMove);
+        },
+
+        handleBtnDown() {
+            // if (this.$mq !== 'tablet' && this.$mq !== 'mobile') {
+            //     this.activeCompare = true;
+            // }
+            window.addEventListener('mousemove', this.onMouseMove);
+        },
+
+        onMouseMove(e) {
+            const left = this.$refs.form.getBoundingClientRect().left;
+            const formWidth = this.$refs.form.getBoundingClientRect().width;
+            const mousePosition = e.pageX;
+            const differrence = Math.round(mousePosition - left);
+            this.temperature = Math.round(differrence * 100 / formWidth);
+
+            if (this.temperature < 0) {
+                this.temperature = 0;
+            } else if (this.temperature > 100) {
+                this.temperature = 100;
             }
+        },
 
-            return this.currentMask.replace(/#/g, ' _ ');
+        handleMouseClick(e) {
+            const left = this.$refs.form.getBoundingClientRect().left;
+            const formWidth = this.$refs.form.getBoundingClientRect().width;
+            const mousePosition = e.pageX;
+            const differrence = Math.round(mousePosition - left);
+            this.temperature = Math.round(differrence * 100 / formWidth);
+
+            if (this.temperature < 0) {
+                this.temperature = 0;
+            } else if (this.temperature > 100) {
+                this.temperature = 100;
+            }
+        },
+
+        // ---------- touchPad handlers ----------
+
+        handleTouchDown(e) {
+            // if (this.$mq === 'tablet' || this.$mq === 'mobile') {
+            //     this.activeCompare = true;
+            // }
+            window.addEventListener('touchmove', this.onTouchMove);
+        },
+
+        onTouchMove(e) {
+            console.log(e);
+            const formWidth = this.$refs.form.getBoundingClientRect().width;
+            const mousePosition = e.changedTouches[0].pageX - 23;
+            this.temperature = Math.round(mousePosition / formWidth * 100);
+
+            if (this.temperature < 0) {
+                this.temperature = 0;
+            } else if (this.temperature > 100) {
+                this.temperature = 100;
+            }
+        },
+
+        handleTouchUp() {
+            // if (this.$mq === 'tablet' || this.$mq === 'mobile') {
+            //     this.activeCompare = false;
+            // }
+            window.removeEventListener('touchmove', this.onTouchMove);
         },
     },
 }
@@ -443,14 +502,16 @@ export default {
         letter-spacing: .05em;
         border-radius: 10rem;
         border: 1px solid $text-color;
-        transition: 
-            border $default-transition,
-            color $default-transition;
+        transition: $default-transition;
         cursor: pointer;
 
         &:hover {
             border: 1px solid $blue;
             color: $blue;
+        }
+
+        &:active {
+            opacity: .5;
         }
 
         @include respond-to(tablet) {
